@@ -13,7 +13,7 @@ class CreateDeviseOauth2ProvidableSchema < ActiveRecord::Migration
     end
 
     create_table :oauth2_access_tokens do |t|
-      t.belongs_to :user, :client, :refresh_token
+      t.belongs_to :account, :client, :refresh_token
       t.string :token
       t.datetime :expires_at
       t.timestamps
@@ -21,12 +21,12 @@ class CreateDeviseOauth2ProvidableSchema < ActiveRecord::Migration
     change_table :oauth2_access_tokens do |t|
       t.index :token, :unique => true
       t.index :expires_at
-      t.index :user_id
+      t.index :account_id
       t.index :client_id
     end
 
     create_table :oauth2_refresh_tokens do |t|
-      t.belongs_to :user, :client
+      t.belongs_to :account, :client
       t.string :token
       t.datetime :expires_at
       t.timestamps
@@ -34,12 +34,12 @@ class CreateDeviseOauth2ProvidableSchema < ActiveRecord::Migration
     change_table :oauth2_refresh_tokens do |t|
       t.index :token, :unique => true
       t.index :expires_at
-      t.index :user_id
+      t.index :account_id
       t.index :client_id
     end
 
     create_table :oauth2_authorization_codes do |t|
-      t.belongs_to :user, :client
+      t.belongs_to :account, :client
       t.string :token
       t.datetime :expires_at
       t.timestamps
@@ -47,7 +47,7 @@ class CreateDeviseOauth2ProvidableSchema < ActiveRecord::Migration
     change_table :oauth2_authorization_codes do |t|
       t.index :token, :unique => true
       t.index :expires_at
-      t.index :user_id
+      t.index :account_id
       t.index :client_id
     end
   end
