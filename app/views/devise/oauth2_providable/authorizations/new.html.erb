@@ -1,4 +1,19 @@
-<h2><%= link_to @client.name, @client.website %> is requesting permission to access your resources.</h2>
-
-<%= render 'devise/oauth2_providable/authorizations/form', :client => @client, :response_type => @response_type, :redirect_uri => @redirect_uri, :action => :approve %>
-<%= render 'devise/oauth2_providable/authorizations/form', :client => @client, :response_type => @response_type, :redirect_uri => @redirect_uri, :action => :deny %>
+<%= form_tag authorizations_path ,:class=>"clearfix",:style=>"width:100%" do %>
+      <p class="input-wrap">
+        将允许<%=link_to @client.name,@client.website,{:target=>"_blank"}%> 进行以下操作：
+        <ul>
+        	<li>获得你的个人信息，好友关系</li>
+        	<li>发送消息到你的社区</li>
+        	<li>获得你消息的回复</li>
+        </ul>
+      </p>
+    <%= hidden_field_tag :client_id, @client.identifier %>
+    <%= hidden_field_tag :response_type, @response_type %>
+    <%= hidden_field_tag :redirect_uri, @redirect_uri %>
+    <%= hidden_field_tag :state, params[:state]%>
+    <hr>
+      <div class="form-actions">
+       <input type="submit" value="授权" name="approve" class="button blue">
+       <input type="submit" value="取消" name="deny" class="button white">
+      </div>
+<%end%>

@@ -1,0 +1,32 @@
+<%= form_tag "/oauth2/login_approval" ,:class=>"clearfix",:style=>"width:100%" do %>
+        <% if @resource&&@resource.errors.any? %>
+          <div id="notice" class="alert alert-error">
+              <% @resource.errors.each do |key,msg| %>
+               <div class="content"><%= msg %></div>
+              <% end %>
+          </div>
+        <%end%>
+      <p class="input-wrap">
+        授权 <%=link_to @client.name,@client.website,{:target=>"_blank"}%> 访问你的敏行帐号 ，并同时登录敏行系统
+      </p>
+      <p class="input-wrap">
+      <label for="user_email">账号：</label>
+        <input  type="email" size="30" class="login-input" placeholder="请输入敏行的账号" name="email" id="user_email">
+      </p>
+      <p class="input-wrap">
+        <label for="user_email">密码：</label>
+       <input type="password" size="30" placeholder="密码" name="password" id="user_password">
+      </p>
+
+
+    <%= hidden_field_tag :client_id, @client.identifier %>
+    <%= hidden_field_tag :response_type, @response_type %>
+    <%= hidden_field_tag :redirect_uri, @redirect_uri %>
+    <%= hidden_field_tag :state, params[:state]%>
+
+    <hr>
+      <div class="form-actions">
+       <input type="submit" value="登录" name="approve" class="button blue">
+       <input type="submit" value="取消" name="deny" class="button white">
+      </div>
+<%end%>

@@ -11,6 +11,11 @@ module Devise
       initializer "devise_oauth2_providable.initialize_application", :before=> :load_config_initializers do |app|
         app.config.filter_parameters << :client_secret
       end
+
+       initializer :assets do |config|
+        Rails.application.config.assets.precompile += %w( devise/oauth.js devise/oauth.css )
+      end
+
     end
   end
 end
