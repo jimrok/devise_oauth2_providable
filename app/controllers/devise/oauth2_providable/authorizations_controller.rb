@@ -66,7 +66,7 @@ module Devise
           result[:code]=1
           result[:error_desc]="The token has expired."
         end
-        render :js =>"#{params[:callback]}("+result.to_json+")"
+       render_jsonp result
       end
       private
 
