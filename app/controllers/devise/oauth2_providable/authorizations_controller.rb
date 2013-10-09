@@ -86,7 +86,12 @@ module Devise
       def authorize_endpoint(allow_approval = false)
         Rack::OAuth2::Server::Authorize.new do |req, res|
           @client = Client.find_by_identifier(req.client_id) || req.bad_request!
-          res.redirect_uri = @redirect_uri = req.verify_redirect_uri!(@client.redirect_uri,true)
+          if req.response_type==:token && Regexp.new(req.env["HTTP_HOST"]+"/connect/redirect-1.0.0.html")=~ req.params["redirect_uri"] then
+            #如果是jsAPI请求，不需要校验跟注册客户端的回调地址
+            res.redirect_uri =@redirect_uri=req.params["redirect_uri"];
+          else
+            res.redirect_uri = @redirect_uri = req.verify_redirect_uri!(@client.redirect_uri,true)
+         end
           if allow_approval
             if params[:approve].present?
               case req.response_type
