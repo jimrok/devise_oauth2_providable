@@ -8,6 +8,7 @@ require 'devise/oauth2_providable/strategies/oauth2_refresh_token_grant_type_str
 require 'devise/oauth2_providable/strategies/oauth2_authorization_code_grant_type_strategy'
 require 'devise/oauth2_providable/models/oauth2_providable'
 require 'devise/oauth2_providable/models/oauth2_password_grantable'
+require 'devise/oauth2_providable/models/js_cellphone_grantable'
 require 'devise/oauth2_providable/models/oauth2_refresh_token_grantable'
 require 'devise/oauth2_providable/models/oauth2_authorization_code_grantable'
 
@@ -33,6 +34,12 @@ Devise.add_module(:oauth2_providable,
 Devise.add_module(:oauth2_password_grantable, 
   :strategy => true,
   :model => 'devise/oauth2_providable/models/oauth2_password_grantable')
+Devise.add_module(:js_cellphone_grantable, 
+  :strategy => true,
+  :model => 'devise/oauth2_providable/models/js_cellphone_grantable')
+Devise.add_module(:js_oa_account_grantable, 
+  :strategy => true,
+  :model => 'devise/oauth2_providable/models/js_oa_account_grantable')
 Devise.add_module(:oauth2_refresh_token_grantable, 
   :strategy => true,
   :model => 'devise/oauth2_providable/models/oauth2_refresh_token_grantable')
