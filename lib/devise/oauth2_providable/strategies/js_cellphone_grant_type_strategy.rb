@@ -13,7 +13,7 @@ module Devise
         if cellphone.present? 
             last_sender = SmsAuthSender.find_not_valid_sender(cellphone, verification_code)
             if last_sender
-                if ((Time.now - last_sender.created_at) < 300) then
+                if ((Time.now - last_sender.created_at) > 300) then
                     oauth_error! :invalid_grant, 'invalid verification_code'
                 else
                     user = last_sender.valid_auth!

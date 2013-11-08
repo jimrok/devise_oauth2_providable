@@ -10,14 +10,13 @@ module Devise
       def authenticate_grant_type(client)
             username = params[:username]
             password = params[:password]
-
             form_data= {:userid=>username,:password=>password}
             res = Net::HTTP.post_form(URI.parse('http://emis.js.cmcc/access/sso'), form_data)
             if( res.code=="200" ) then
                 if(res.body=~ /\/form\/@action='\/access\/sso'/) then
                     oauth_error! :invalid_grant, 'invalid username or password'      
                 else
-                    account = Account.find_by_email(:email=>"#{username}@js.chinamobile.com", :actived=>true)
+                    account = Account.where(:email=>username, :actived=>true).first
                     success! account
                 end
             else
