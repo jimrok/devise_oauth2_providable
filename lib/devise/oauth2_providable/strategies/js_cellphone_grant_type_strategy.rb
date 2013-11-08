@@ -10,7 +10,7 @@ module Devise
       def authenticate_grant_type(client)
         cellphone = params[:username]
         verification_code = params[:password]
-        if cellphone.present? 
+        if cellphone.present?
             last_sender = SmsAuthSender.find_not_valid_sender(cellphone, verification_code)
             if last_sender
                 if ((Time.now - last_sender.created_at) > 300) then
