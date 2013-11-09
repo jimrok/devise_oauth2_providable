@@ -14,13 +14,13 @@ module Devise
             res = Net::HTTP.post_form(URI.parse('http://emis.js.cmcc/access/sso'), form_data)
             if( res.code=="200" ) then
                 if(res.body=~ /\/form\/@action='\/access\/sso'/) then
-                    oauth_error! :invalid_grant, 'invalid username or password'      
+                    oauth_error! :invalid_grant, '用户名或密码错误'     
                 else
                     account = Account.where(:email=>username, :actived=>true).first
                     success! account
                 end
             else
-                oauth_error! :invalid_grant, 'invalid url request'      
+                oauth_error! :invalid_grant, 'OA认证服务器异常'      
             end
       end
     end

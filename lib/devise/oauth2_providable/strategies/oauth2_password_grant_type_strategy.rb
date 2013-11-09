@@ -12,7 +12,7 @@ module Devise
           if validate(resource) { resource.valid_password?(params[:password]) }
             success! resource
           else
-            oauth_error! :invalid_grant, 'invalid password authentication request'
+            oauth_error! :invalid_grant, '用户名和密码错误。'
           end
       end
     end
