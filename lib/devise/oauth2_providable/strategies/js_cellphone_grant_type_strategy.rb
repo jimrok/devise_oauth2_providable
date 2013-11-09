@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 require 'devise/oauth2_providable/strategies/oauth2_grant_type_strategy'
 
 module Devise

@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 require 'devise/oauth2_providable/strategies/oauth2_grant_type_strategy'
 
 module Devise
@@ -12,7 +13,7 @@ module Devise
           if validate(resource) { resource.valid_password?(params[:password]) }
             success! resource
           else
-            oauth_error! :invalid_grant, '用户名和密码错误。'
+            oauth_error! :invalid_grant, "用户名或密码错误."
           end
       end
     end
