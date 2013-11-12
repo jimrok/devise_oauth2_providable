@@ -15,8 +15,21 @@ module Devise
         res = Net::HTTP.post_form(URI.parse('http://emis.js.cmcc/access/sso'), form_data)
 
         if(res['Set-Cookie'] && res['Set-Cookie'].start_with?("ObSSOCookie=")) then
-          account = Account.where(:email=>username, :actived=>true).first
-          success! account
+          sso_cookie = res['Set-Cookie'].split(";").first.split("=").last
+          cookies[:ObSSOCookie] = { :value =>sso_cookie}
+          user_entry = LdapHelper.search_user_entry_by_oa_name(username)
+          cookies[:orgid] = user_entry[:o]
+
+          user = User.joins(:user_info).where("user_infos.cellvoice1"=>user_entry[:mobile],:actived=>true,:suspended=>false).first
+          
+          if user then
+              org_id = user_entry[:o].first
+              $redis.setex "user_cookie:#{user.id}", 1800, sso_cookie
+              $redis.setex "user_org_id:#{user.id}", 1800, org_id              
+              success! user.account
+          else
+              oauth_error! :invalid_grant, '该用户不存在'
+          end
         elsif res.code[0].in? ["4","5"] then
           oauth_error! :invalid_grant, 'OA认证服务器异常'
         else
