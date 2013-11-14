@@ -3,7 +3,13 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => :create
 
   def create
-    @refresh_token = oauth2_current_refresh_token || oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
+    if oauth2_current_refresh_token then
+        @refresh_token = oauth2_current_refresh_token
+    else
+        oauth2_current_client.refresh_tokens.delete_all
+        @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
+    end
+    
     Devise::Oauth2Providable::AccessToken.where(:client_id=>oauth2_current_client.id, :account_id=>current_account.id).delete_all
     @access_token = @refresh_token.access_tokens.create!(:client => oauth2_current_client, :account_id => current_account.id)
     render :json => @access_token.token_response
