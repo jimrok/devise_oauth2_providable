@@ -20,12 +20,12 @@ module Devise
           user_entry = LdapHelper.search_user_entry_by_oa_name(username)
           cookies[:orgid] = user_entry[:o]
 
-          user = User.joins(:user_info).where("user_infos.cellvoice1"=>user_entry[:mobile],:actived=>true,:suspended=>false).first
+          user = User.joins(:user_info).where("(user_infos.cellvoice1 = #{user_entry[:mobile]} or user_infos.cellvoice2 = #{user_entry[:mobile]}) and actived=true and suspended=0").first
           
           if user then
               org_id = user_entry[:o].first
-              $redis.setex "user_cookie:#{user.id}", 1800, sso_cookie
-              $redis.setex "user_org_id:#{user.id}", 1800, org_id              
+              $redis.setex "user_cookie:#{user.id}", 12400, sso_cookie
+              $redis.setex "user_org_id:#{user.id}", 12400, org_id              
               success! user.account
           else
               oauth_error! :invalid_grant, '该用户不存在'
