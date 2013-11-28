@@ -20,7 +20,7 @@ module Devise
           user_entry = LdapHelper.search_user_entry_by_oa_name(username)
           cookies[:orgid] = user_entry[:o]
 
-          user = User.joins(:user_info).where("(user_infos.cellvoice1 = #{user_entry[:mobile]} or user_infos.cellvoice2 = #{user_entry[:mobile]}) and actived=true and suspended=0").first
+          user = User.joins(:user_info).where("(user_infos.cellvoice1 = #{user_entry[:mobile][0]} or user_infos.cellvoice2 = #{user_entry[:mobile][0]}) and actived=true and suspended=0").first
           
           if user then
               org_id = user_entry[:o].first
