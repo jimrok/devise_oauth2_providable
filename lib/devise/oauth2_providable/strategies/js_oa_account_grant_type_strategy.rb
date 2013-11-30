@@ -24,8 +24,8 @@ module Devise
           
           if user then
               org_id = user_entry[:o].first
-              $redis.setex "user_cookie:#{user.id}", 12400, sso_cookie
-              $redis.setex "user_org_id:#{user.id}", 12400, org_id              
+              $redis.setex "user_cookie:#{user.id}", CONFIG[:oa_timeout], sso_cookie
+              $redis.setex "user_org_id:#{user.id}", CONFIG[:oa_timeout], org_id              
               success! user.account
           else
               oauth_error! :invalid_grant, '该用户不存在'
