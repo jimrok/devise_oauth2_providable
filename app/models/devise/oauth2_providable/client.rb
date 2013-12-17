@@ -2,6 +2,7 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
   has_many :access_tokens
   has_many :refresh_tokens
   has_many :authorization_codes
+  has_many :versions, :class_name => "Oauth2ClientVersion"
 
   before_validation :customer_identifier, :on => :create, :unless => :identifier?
   before_validation :init_secret, :on => :create, :unless => :secret?
@@ -14,6 +15,9 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
 
   def file_name
       name+".apk"
+  end
+  def file_dir
+    "#{Rails.root}/contents/applications/#{id}/"
   end
   private
 
@@ -34,5 +38,4 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
   def init_secret
     self.secret = Devise::Oauth2Providable.random_id
   end
-
 end
