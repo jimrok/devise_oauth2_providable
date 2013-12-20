@@ -14,8 +14,8 @@ module Devise
           success! refresh_token.account
         else
           error_message="刷新令牌无效。"
-          if(User.current) then
-            account_id=User.current.account_id
+          account_id=params[:account_id]
+          if(account_id) then
             device=ApnDevice.find_by_account_id_and_deleted(account_id,0)
             unless device.nil?
               error_message="您的账号已于#{device.updated_at.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。" 
