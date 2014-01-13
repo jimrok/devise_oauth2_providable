@@ -17,7 +17,7 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
       name+".apk"
   end
   def file_dir
-    "#{Rails.root}/contents/applications/#{id}/"
+    File.realpath("#{Rails.root}/contents/applications/#{id}/") + "/"
   end
   private
 
