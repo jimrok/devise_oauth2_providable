@@ -8,4 +8,5 @@ class Devise::Oauth2Providable::RefreshToken < ActiveRecord::Base
   def account
   	Account.find_cached_by_id self.account_id
   end
+  
 end
