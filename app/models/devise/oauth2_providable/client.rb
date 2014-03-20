@@ -10,7 +10,6 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
   validates :identifier, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :identifier, :website, :redirect_uri, :latest_version_id, :description,:upgrade_url,:at_hoc
   belongs_to :latest_version, :class_name => "Oauth2ClientVersion", :foreign_key => "latest_version_id"
 
   def file_name
