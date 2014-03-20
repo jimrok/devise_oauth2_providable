@@ -18,6 +18,16 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
   def file_dir
     File.realpath("#{Rails.root}/contents")+"/applications/#{id}/"
   end
+
+
+  def self.find_cached_by_identifier(identifier_id)
+    Rails.cache.fetch "/oauth2/client/#{identifier_id}" do
+      find_by_identifier(identifier_id)
+    end
+  end
+
+
+
   private
 
   def customer_identifier

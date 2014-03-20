@@ -18,14 +18,14 @@ class Devise::Oauth2Providable::AccessToken < ActiveRecord::Base
 
 
   def self.find_current_access_token_by_account_id(account_id)
-    Rails.cache.fetch "/access_token_by_account/#{account_id}" do
+    Rails.cache.fetch "/oauth2/access_token_by_account/#{account_id}" do
       token = self.unscoped.find_by_account_id account_id
       token.token
     end
   end
 
   def self.find_cached_by_token(access_token)
-    Rails.cache.fetch "/access_token/#{account_id}" do
+    Rails.cache.fetch "/oauth2/access_token/#{account_id}" do
       find_by_token(access_token)
     end
   end
