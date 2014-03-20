@@ -21,7 +21,6 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     @access_token = @refresh_token.access_tokens.create!(:client => oauth2_current_client, :account_id => current_account.id)
 
     # Clean the cache
-    Rails.cache.delete "/oauth2/access_token/#{current_account.id}"
     Rails.cache.delete "/oauth2/access_token_by_account/#{current_account.id}"
 
     render :json => @access_token.token_response
