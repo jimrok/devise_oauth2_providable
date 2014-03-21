@@ -17,11 +17,14 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       oauth2_current_client.id
     end
 
+    old_tokens = Devise::Oauth2Providable::AccessToken.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
+
     Devise::Oauth2Providable::AccessToken.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
     @access_token = @refresh_token.access_tokens.create!(:client => oauth2_current_client, :account_id => current_account.id)
 
     # Clean the cache
     Rails.cache.delete "/oauth2/access_token_by_account/#{current_account.id}"
+    old_tokens.each {|x| Rails.cache.delete "/oauth2/access_token/#{x}" }
 
     render :json => @access_token.token_response
   end
