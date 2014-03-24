@@ -9,12 +9,18 @@ module Devise
       end
 
       def authenticate_grant_type(client)
-          resource = mapping.to.find_for_authentication(mapping.to.authentication_keys.first => params[:username])
-          if validate(resource) { resource.valid_password?(params[:password]) }
-            success! resource
-          else
-            oauth_error! :invalid_grant, "用户名或密码错误."
-          end
+        login_name = params[:login_name] || params[:username]
+
+        warden = request.env['warden']
+        warden.authenticate(:password_authenticatable)
+        resource = warden.user(:account)
+
+        
+        if validate(resource) { !resource.nil? }
+          success! resource
+        else
+          oauth_error! :invalid_grant, "用户名或密码错误."
+        end
       end
     end
   end

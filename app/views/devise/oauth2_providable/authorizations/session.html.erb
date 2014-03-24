@@ -10,16 +10,16 @@
         授权 <%=link_to @client.name,@client.website,{:target=>"_blank"}%> 访问你的敏行帐号 ，并同时登录敏行系统
       </p>
       <p class="input-wrap">
-      <label for="user_email">账号：</label>
-        <input  type="email" size="30" class="login-input" placeholder="请输入敏行的账号" name="email" id="user_email">
+      <label for="login_name">账号：</label>
+        <input  size="30" class="login-input" placeholder="请输入敏行的账号" name="login_name" id="login_name">
       </p>
       <p class="input-wrap">
-        <label for="user_email">密码：</label>
-       <input type="password" size="30" placeholder="密码" name="password" id="user_password">
+        <label for="password">密码：</label>
+       <input type="password" size="30" placeholder="密码" name="password" id="password">
       </p>
 
 
-    <%= hidden_field_tag :client_id, @client.identifier %>
+    <%= hidden_field_tag :app_id, @client.identifier %>
     <%= hidden_field_tag :response_type, @response_type %>
     <%= hidden_field_tag :redirect_uri, @redirect_uri %>
     <%= hidden_field_tag :state, params[:state]%>

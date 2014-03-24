@@ -7,7 +7,7 @@
         	<li>获得你消息的回复</li>
         </ul>
       </p>
-    <%= hidden_field_tag :client_id, @client.identifier %>
+    <%= hidden_field_tag :app_id, @client.identifier %>
     <%= hidden_field_tag :response_type, @response_type %>
     <%= hidden_field_tag :redirect_uri, @redirect_uri %>
     <%= hidden_field_tag :state, params[:state]%>

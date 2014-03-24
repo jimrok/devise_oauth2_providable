@@ -39,3 +39,31 @@ Devise.add_module(:oauth2_refresh_token_grantable,
 Devise.add_module(:oauth2_authorization_code_grantable,
   :strategy => true,
   :model => 'devise/oauth2_providable/models/oauth2_authorization_code_grantable')
+
+
+module Rack
+  module OAuth2
+    module Server
+      module Abstract
+        class Request < Rack::Request
+          def initialize(env)
+            super
+            @client_id ||= (params['app_id']||params['client_id'])
+            @scope = Array(params['scope'].to_s.split(' '))
+          end
+
+          def attr_missing_with_error_handling!
+            client_id= params['app_id']||params['client_id']
+            if client_id.present? && @client_id != client_id
+              invalid_request! 'Multiple client credentials are provided.'
+            end
+            attr_missing_without_error_handling!
+          rescue AttrRequired::AttrMissing => e
+            invalid_request! e.message, :state => @state, :redirect_uri => @redirect_uri
+          end
+        end
+      end
+    end
+  end
+end
+
