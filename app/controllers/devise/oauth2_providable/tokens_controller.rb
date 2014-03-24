@@ -6,8 +6,8 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     if oauth2_current_refresh_token then
       @refresh_token = oauth2_current_refresh_token
     else
-      oauth2_current_client.refresh_tokens.delete_all
-      @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
+      Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
+      @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id,:client_id=>oauth2_current_client.id)
     end
 
     # Hard code for delete android and ios,1 for ios,2 for android
@@ -20,7 +20,9 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     old_tokens = Devise::Oauth2Providable::AccessToken.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
 
     Devise::Oauth2Providable::AccessToken.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
+
     @access_token = @refresh_token.access_tokens.create!(:client => oauth2_current_client, :account_id => current_account.id)
+
 
     # Clean the cache
     Rails.cache.delete "/oauth2/access_token_by_account/#{current_account.id}"

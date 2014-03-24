@@ -14,25 +14,26 @@ module Devise
       def new
         respond *authorize_endpoint.call(request.env)
       end
+
+
       def login_approval
 
         if params[:deny].present? then
           respond *authorize_endpoint(:allow_approval).call(request.env)
         else
-          email = params[:email]
-          password = params[:password]
 
-          account = Account.where(:email => email,:actived=>true).first
+          warden = request.env['warden']
+          warden.authenticate(:password_authenticatable)
+          account = warden.user(:account)
 
-          if (account and account.actived? and account.valid_password?(password) and account.home_user) then
+          if (account) then
 
             @resource = account
-
             sign_in(:account,@resource)
-
             respond *authorize_endpoint(:allow_approval).call(request.env)
 
           else
+            email = params[:email]
 
             @resource = Account.new(:email=>email)
             @resource.errors.add(:email, "用户名或密码不正确")
@@ -45,7 +46,7 @@ module Devise
       def create
         respond *authorize_endpoint(:allow_approval).call(request.env)
       end
-      
+
       def me
         access_token=params[:access_token]
         network_name=params[:network_name]
@@ -68,7 +69,7 @@ module Devise
           result[:code]=1
           result[:error_desc]="The token has expired."
         end
-       render_jsonp result
+        render_jsonp result
       end
       private
 
@@ -87,7 +88,7 @@ module Devise
 
       def authorize_endpoint(allow_approval = false)
         Rack::OAuth2::Server::Authorize.new do |req, res|
-          
+
           @client = Client.find_by_identifier(req.app_id || req.client_id) || req.bad_request!
 
           if req.response_type==:token && Regexp.new(req.env["HTTP_HOST"]+"/connect/redirect-1.0.0.html")=~ req.params["redirect_uri"] then
@@ -95,7 +96,7 @@ module Devise
             res.redirect_uri =@redirect_uri=req.params["redirect_uri"];
           else
             res.redirect_uri = @redirect_uri = req.verify_redirect_uri!(@client.redirect_uri,true)
-         end
+          end
           if allow_approval
             if params[:approve].present?
               case req.response_type
