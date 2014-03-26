@@ -7,7 +7,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       @refresh_token = oauth2_current_refresh_token
     else
       Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
-      @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id,:client_id=>oauth2_current_client.id)
+      @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
     end
 
     # Hard code for delete android and ios,1 for ios,2 for android

@@ -16,7 +16,7 @@ module Devise
           error_message="您的账号已过期，请重新登录。"
           account_id=params[:account_id]
           if(account_id) then
-            device=ApnDevice.unscoped.where(:account_id=>account_id).order("updated_at desc").first()
+            device = ApnDevice.where(:account_id=>account_id).order("updated_at desc").first()
             unless device.nil?
               error_message="您的账号已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。" 
             end
