@@ -19,9 +19,11 @@ module Devise
 
       def authenticate!
         app_id = params[:app_id] || params[:client_id]
-        app_key = params[:app_key] || params[:client_secret]
-        client_id, client_secret = request.authorization ? decode_credentials : [app_id, app_key]
+
+        app_secret = params[:app_secret] ||params[:app_key] || params[:client_secret]
+        client_id, client_secret = request.authorization ? decode_credentials : [app_id, app_secret]
         client = Devise::Oauth2Providable::Client.find_cached_by_identifier client_id
+
         if client && client.secret == client_secret
           env[Devise::Oauth2Providable::CLIENT_ENV_REF] = client
           authenticate_grant_type(client)
