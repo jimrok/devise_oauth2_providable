@@ -6,7 +6,12 @@ module Devise
     class Oauth2GrantTypeStrategy < Authenticatable
 
       def valid?
-        params[:controller] == 'devise/oauth2_providable/tokens' && request.post? && params[:grant_type] == grant_type
+        _valid = params[:controller] == 'devise/oauth2_providable/tokens' && request.post? && params[:grant_type] == grant_type
+        
+        unless _valid
+          Rails.logger.error "Oauth2 create token error: password strategy valid faild!"
+        end
+        _valid
       end
 
       # defined by subclass
@@ -28,9 +33,14 @@ module Devise
           env[Devise::Oauth2Providable::CLIENT_ENV_REF] = client
           authenticate_grant_type(client)
         else
+          if client.nil? then
+            Rails.logger.error "Oauth2 create token error: Oauth client not found with id:#{app_id}"
+          else
+            Rails.logger.error "Oauth2 create token error: Oauth client not found for secret:#{client_secret} not valid by this client."
+          end
           oauth_error! :invalid_client, '请求证书不正确。'
         end
-        
+
       end
 
       # return custom error response in accordance with the oauth spec

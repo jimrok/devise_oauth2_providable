@@ -19,6 +19,7 @@ module Devise
         if validate(resource) { !resource.nil? }
           success! resource
         else
+          Rails.logger.error "Oauth2 create token error: invalid_grant"
           oauth_error! :invalid_grant, "用户名或密码错误."
         end
       end

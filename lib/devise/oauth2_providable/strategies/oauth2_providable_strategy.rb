@@ -8,6 +8,7 @@ module Devise
         @req.oauth2?
       end
       def authenticate!
+        
         @req.setup!
         token = Devise::Oauth2Providable::AccessToken.find_by_token @req.access_token
         env[Devise::Oauth2Providable::CLIENT_ENV_REF] = token.client if token
@@ -15,6 +16,7 @@ module Devise
         if validate(resource)
           success! resource
         else
+          Rails.logger.error "Oauth2 create token error: invalid_token."
           fail(:invalid_token)
         end
       end
