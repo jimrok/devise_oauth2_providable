@@ -11,7 +11,8 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
         Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
         @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
       else
-        Rails.logger.error "Oauth2 create token error: Oauth client not found."
+
+        Rails.logger.error "Oauth2 create token error: Oauth client not found, can your see current_account id:#{current_account.id}"
         return render(:json => {:errors=>{:message=>"Oauth client not found.",:status_code=>:invalid_request}},:status => 400)
       end
 

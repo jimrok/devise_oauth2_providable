@@ -7,10 +7,6 @@ module Devise
 
       def valid?
         _valid = params[:controller] == 'devise/oauth2_providable/tokens' && request.post? && params[:grant_type] == grant_type
-        
-        unless _valid
-          Rails.logger.error "Oauth2 create token error: password strategy valid faild!"
-        end
         _valid
       end
 
