@@ -1,6 +1,7 @@
 class Devise::Oauth2Providable::TokensController < ApplicationController
   before_filter :authenticate_account!
   skip_before_filter :verify_authenticity_token, :only => :create
+  include UsersHelper
 
   def create
     if oauth2_current_refresh_token then
@@ -39,6 +40,10 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     token_resp = @access_token.token_response
     token_resp.merge!(:default_network_id => current_account.home_user.network_id)
     
+    if params[:include_user] == 'true' or params[:include_user] == true then
+        token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client)
+    end
+
     render :json => token_resp
   end
 
