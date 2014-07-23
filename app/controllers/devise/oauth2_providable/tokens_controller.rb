@@ -41,7 +41,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     token_resp.merge!(:default_network_id => current_account.home_user.network_id)
     
     if params[:include_user] == 'true' or params[:include_user] == true then
-        token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client, params[:client_version_code])
+        token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client.identifier, params[:client_version_code])
     end
 
     render :json => token_resp
