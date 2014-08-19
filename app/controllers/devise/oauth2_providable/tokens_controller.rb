@@ -44,7 +44,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client.identifier, params[:client_version_code])
     end
 
-    env['rack.session.options'][:skip] = true # Not send cookie to client.
+    env['rack.session.options'][:skip] = true if [1,2].include?(oauth2_current_client.id) # Not send cookie to client.
     render :json => token_resp
   end
 
