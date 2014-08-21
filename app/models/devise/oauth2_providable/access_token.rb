@@ -30,6 +30,10 @@ class Devise::Oauth2Providable::AccessToken < ActiveRecord::Base
     end
   end
 
+  def expire_cache
+    Rails.cache.delete "/oauth2/access_token_by_account/#{self.account_id}"
+    Rails.cache.delete "/oauth2/access_token/#{self.token}"
+  end
 
   private
 
