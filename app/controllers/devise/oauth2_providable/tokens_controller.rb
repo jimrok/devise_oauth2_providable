@@ -4,7 +4,6 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
   include UsersHelper
 
   def create
-    binding.pry
     if oauth2_current_refresh_token then
       @refresh_token = oauth2_current_refresh_token
     else
