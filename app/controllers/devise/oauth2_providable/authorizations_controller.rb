@@ -25,9 +25,10 @@ module Devise
         else
 
           warden = request.env['warden']
-          warden.authenticate(:password_authenticatable)
-          account = warden.user(:account)
-
+          # warden.authenticate(:password_authenticatable)
+          # account = warden.user(:account)
+          account = warden.authenticate_account
+          
           if (account) then
 
             @resource = account
