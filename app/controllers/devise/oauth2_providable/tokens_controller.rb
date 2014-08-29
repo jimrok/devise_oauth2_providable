@@ -10,7 +10,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
 
       if oauth2_current_client then
         # Ocu user do not allow to login app and website.
-        if current_account.home_user.role_code == 3 and oauth2_current_client.id != ::Const::OCU_PLATFORM_APP then
+        if current_account.home_user.role_code == 3 and oauth2_current_client.identifier != ::Const::OCU_PLATFORM_APP then
             return render(:json => {:errors=>{:message=>"公众号不能登录客户端.",:status_code=>:invalid_request}},:status => 403)
         else
             Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
@@ -25,17 +25,17 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     end
 
     # Hard code for delete android and ios,1 for ios,2 for android
-    del_client_id = if [1,2].include?(oauth2_current_client.id) then
+    del_client_id = if [1,2].include?(oauth2_current_client.identifier) then
       [1,2]
     else
-      oauth2_current_client.id
+      oauth2_current_client.identifier
     end
 
     old_tokens = Devise::Oauth2Providable::AccessToken.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
 
     Devise::Oauth2Providable::AccessToken.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
 
-    @access_token = @refresh_token.access_tokens.create!(:client => oauth2_current_client, :account_id => current_account.id)
+    @access_token = @refresh_token.access_tokens.create!(:client_id => oauth2_current_client.identifier, :account_id => current_account.id)
 
 
     # Clean the cache
@@ -49,7 +49,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client.identifier, params[:client_version_code])
     end
 
-    env['rack.session.options'][:skip] = true if [1,2].include?(oauth2_current_client.id) # Not send cookie to client.
+    env['rack.session.options'][:skip] = true if [1,2].include?(oauth2_current_client.identifier) # Not send cookie to client.
     render :json => token_resp
   end
 
