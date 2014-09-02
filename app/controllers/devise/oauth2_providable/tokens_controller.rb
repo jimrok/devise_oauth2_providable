@@ -25,17 +25,19 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     end
 
     # Hard code for delete android and ios,1 for ios,2 for android
-    del_client_id = if [1,2].include?(oauth2_current_client.identifier) then
-      [1,2]
+    del_client_id = if ["1", "2"].include?(oauth2_current_client.identifier) then
+        other = oauth2_current_client.identifier == "1" ? "2" : "1"
+        other_client = Devise::Oauth2Providable::Client.find_cached_by_identifier other
+        [oauth2_current_client.id, other_client.id]
     else
-      oauth2_current_client.identifier
+      oauth2_current_client.id
     end
 
     old_tokens = Devise::Oauth2Providable::AccessToken.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
 
     Devise::Oauth2Providable::AccessToken.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
 
-    @access_token = @refresh_token.access_tokens.create!(:client_id => oauth2_current_client.identifier, :account_id => current_account.id)
+    @access_token = @refresh_token.access_tokens.create!(:client_id => oauth2_current_client.id, :account_id => current_account.id)
 
 
     # Clean the cache
@@ -49,7 +51,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       token_resp[:user_info] = current_networks(current_account, true, oauth2_current_client.identifier, params[:client_version_code])
     end
 
-    env['rack.session.options'][:skip] = true if [1,2].include?(oauth2_current_client.identifier) # Not send cookie to client.
+    env['rack.session.options'][:skip] = true if ["1", "2"].include?(oauth2_current_client.identifier) # Not send cookie to client.
     render :json => token_resp
   end
 

@@ -21,12 +21,16 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
 
 
   def self.find_cached_by_identifier(identifier_id)
-    Rails.cache.fetch "/oauth2/client/#{identifier_id}" do
+    Rails.cache.fetch "/oauth2/client/identifier/#{identifier_id}" do
       find_by_identifier(identifier_id)
     end
   end
 
-
+  def self.find_cached_by_id(client_id)
+    Rails.cache.fetch "/oauth2/client/#{client_id}" do
+      find_by_id(client_id)
+    end
+  end
 
   private
 
