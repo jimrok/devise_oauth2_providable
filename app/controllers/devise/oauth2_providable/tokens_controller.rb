@@ -9,7 +9,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     else
 
       if oauth2_current_client then
-          Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
+          Devise::Oauth2Providable::RefreshToken.unscoped.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
           @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
       else
 
@@ -28,9 +28,9 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       oauth2_current_client.id
     end
 
-    old_tokens = Devise::Oauth2Providable::AccessToken.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
+    old_tokens = Devise::Oauth2Providable::AccessToken.unscoped.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
 
-    Devise::Oauth2Providable::AccessToken.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
+    Devise::Oauth2Providable::AccessToken.unscoped.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
 
     @access_token = @refresh_token.access_tokens.create!(:client_id => oauth2_current_client.id, :account_id => current_account.id)
 
