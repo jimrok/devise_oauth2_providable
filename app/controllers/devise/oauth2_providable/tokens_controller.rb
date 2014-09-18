@@ -9,13 +9,8 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     else
 
       if oauth2_current_client then
-        # Ocu user do not allow to login app and website.
-        if current_account.home_user.role_code == 3 and oauth2_current_client.identifier != ::Const::OCU_PLATFORM_APP then
-            return render(:json => {:errors=>{:message=>"公众号不能登录客户端.",:status_code=>:invalid_request}},:status => 403)
-        else
-            Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
-            @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
-        end
+          Devise::Oauth2Providable::RefreshToken.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
+          @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
       else
 
         Rails.logger.error "Oauth2 create token error: Oauth client not found, can your see current_account id:#{current_account.id}"
