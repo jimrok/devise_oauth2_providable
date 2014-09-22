@@ -32,6 +32,11 @@ class Devise::Oauth2Providable::Client < ActiveRecord::Base
     end
   end
 
+  def expire_cache
+    Rails.cache.delete "/oauth2/client/identifier/#{self.identifier}"
+    Rails.cache.delete "/oauth2/client/#{self.id}"
+  end
+
   private
 
   def customer_identifier
