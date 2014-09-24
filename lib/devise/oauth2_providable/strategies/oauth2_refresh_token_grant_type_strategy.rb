@@ -18,7 +18,11 @@ module Devise
           if(account_id) then
             device = ApnDevice.where(:account_id=>account_id).order("updated_at desc").first()
             unless device.nil?
-              error_message="您的账号已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。" 
+              if device.app_id == 0 then
+                error_message = "您已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}取消了该客户端的授权,请重新登录。"
+              else
+                error_message = "您的账号已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。" 
+              end
             end
           end
           oauth_error! :invalid_grant, error_message
