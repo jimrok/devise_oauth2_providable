@@ -27,7 +27,25 @@ module Devise
           warden = request.env['warden']
           # warden.authenticate(:password_authenticatable)
           # account = warden.user(:account)
-          account = warden.authenticate_account
+          #account = warden.authenticate!
+
+          resource =  Account.find_for_authentication(params)
+          password = params[:password]
+
+          account = if Account.valid_account?(resource,password)
+            resource.after_database_authentication
+            
+            if resource.home_user.role_code == ::Const::OFFICIAL_ACCOUNT_ROLE_CODE then
+              nil
+            else
+              resource
+            end
+            
+          else
+            nil
+          end
+
+
           
           if (account) then
 
@@ -104,10 +122,13 @@ module Devise
             if params[:approve].present?
               case req.response_type
               when :code
-                authorization_code = current_account.authorization_codes.create!(:client => @client)
+                authorization_code = current_account.authorization_codes.create!(:client_id => @client.identifier,:account_id => current_account.id)
                 res.code = authorization_code.token
               when :token
-                access_token = current_account.access_tokens.create!(:client => @client)
+                #binding.pry
+                warden = request.env['warden']
+                account = warden.user(:account)
+                access_token = current_account.access_tokens.create!(:client_id => @client.identifier,:account_id => current_account.id)
                 # token_str=access_token.token
                 # bearer_token = Rack::OAuth2::AccessToken::Bearer.new(:access_token => token_str)
                 res.access_token = access_token
