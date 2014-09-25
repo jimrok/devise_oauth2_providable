@@ -57,7 +57,7 @@ module Devise
             login_name = params[:login_name]
 
             @resource = Account.new(:login_name=>login_name)
-            @resource.errors.add(:email, "用户名或密码不正确")
+            @resource.errors.add(:email, "帐号或密码不正确")
             authorize_endpoint.call(request.env)
             render "session"
           end
