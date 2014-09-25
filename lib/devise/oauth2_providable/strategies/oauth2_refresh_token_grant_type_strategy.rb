@@ -10,8 +10,15 @@ module Devise
 
       def authenticate_grant_type(client)
         if refresh_token = client.refresh_tokens.find_by_token(params[:refresh_token])
-          env[Devise::Oauth2Providable::REFRESH_TOKEN_ENV_REF] = refresh_token
-          success! refresh_token.account
+
+          acc = refresh_token.account
+          if acc && acc.valid_account? then
+            env[Devise::Oauth2Providable::REFRESH_TOKEN_ENV_REF] = refresh_token
+            success! refresh_token.account
+          else
+            error_message = "您的账号已经失效，请与系统管理员联系解决这个问题。"
+            oauth_error! :invalid_grant, error_message
+          end
         else
           error_message="您的账号已过期，请重新登录。"
           account_id=params[:account_id]
@@ -21,7 +28,7 @@ module Devise
               if device.app_id == 0 then
                 error_message = "您已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}取消了该客户端的授权,请重新登录。"
               else
-                error_message = "您的账号已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。" 
+                error_message = "您的账号已于#{device.updated_at.localtime.strftime("%Y-%m-%d %H:%M")}在其它地方登录。登录设备是#{device.device_name}，请注意账号安全。"
               end
             end
           end
