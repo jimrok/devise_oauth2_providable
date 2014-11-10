@@ -14,7 +14,7 @@ module Devise
           belongs_to :account
           belongs_to :client
 
-          attr_accessible :account_id, :client_id
+          #attr_accessible :account_id, :client_id
 
           after_initialize :init_token, :on => :create, :unless => :token?
           after_initialize :init_expires_at, :on => :create, :unless => :expires_at?

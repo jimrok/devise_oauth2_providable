@@ -28,7 +28,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
       oauth2_current_client.id
     end
 
-    old_tokens = Devise::Oauth2Providable::AccessToken.unscoped.select([:token]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
+    old_tokens = Devise::Oauth2Providable::AccessToken.unscoped.select([:token,:expires_at]).where(:client_id=>del_client_id, :account_id=>current_account.id).map {|x| x.token}
 
     Devise::Oauth2Providable::AccessToken.unscoped.where(:client_id=>del_client_id, :account_id=>current_account.id).delete_all
 
