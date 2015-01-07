@@ -10,7 +10,7 @@ class Devise::Oauth2Providable::AccessToken < ActiveRecord::Base
     response = {
       :access_token => token,
       :token_type => 'bearer',
-      :expires_in => expires_in 
+      :expires_in => expires_in
     }
     response[:refresh_token] = refresh_token.token if refresh_token
     response
@@ -33,6 +33,10 @@ class Devise::Oauth2Providable::AccessToken < ActiveRecord::Base
   def expire_cache
     Rails.cache.delete "/oauth2/access_token_by_account/#{self.account_id}"
     Rails.cache.delete "/oauth2/access_token/#{self.token}"
+  end
+
+  def write_to_cache
+    Rails.cache.write "/oauth2/access_token/#{self.token}",self
   end
 
   private

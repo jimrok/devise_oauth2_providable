@@ -9,8 +9,8 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     else
 
       if oauth2_current_client then
-          Devise::Oauth2Providable::RefreshToken.unscoped.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
-          @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
+        Devise::Oauth2Providable::RefreshToken.unscoped.where(:account_id=>current_account.id,:client_id=>[1,2]).delete_all
+        @refresh_token = oauth2_current_client.refresh_tokens.create!(:account_id => current_account.id)
       else
 
         Rails.logger.error "Oauth2 create token error: Oauth client not found, can your see current_account id:#{current_account.id}"
@@ -21,9 +21,9 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
 
     # Hard code for delete android and ios,1 for ios,2 for android
     del_client_id = if ["1", "2"].include?(oauth2_current_client.identifier) then
-        other = oauth2_current_client.identifier == "1" ? "2" : "1"
-        other_client = Devise::Oauth2Providable::Client.find_cached_by_identifier other
-        [oauth2_current_client.id, other_client.id]
+      other = oauth2_current_client.identifier == "1" ? "2" : "1"
+      other_client = Devise::Oauth2Providable::Client.find_cached_by_identifier other
+      [oauth2_current_client.id, other_client.id]
     else
       oauth2_current_client.id
     end
@@ -39,6 +39,7 @@ class Devise::Oauth2Providable::TokensController < ApplicationController
     Rails.cache.delete "/oauth2/access_token_by_account/#{current_account.id}"
     old_tokens.each {|x| Rails.cache.delete "/oauth2/access_token/#{x}" }
 
+    @access_token.write_to_cache
     token_resp = @access_token.token_response
     token_resp.merge!(:default_network_id => current_account.home_user.network_id)
 
